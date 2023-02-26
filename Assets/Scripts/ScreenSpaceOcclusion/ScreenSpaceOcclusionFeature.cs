@@ -7,16 +7,28 @@ using System;
 
 public class ScreenSpaceOcclusionFeature : ScriptableRendererFeature
 {
-
     public ScreenSpaceOcclusionSetting setting = new ScreenSpaceOcclusionSetting();
+    private ScreenSpaceOcclusion m_Pass;
+    private ScreenSpaceOcclusionDebug m_DebugPass;
 
     public override void Create()
     {
-
+        m_Pass = new ScreenSpaceOcclusion();
+        m_Pass.setting = setting;
+        m_DebugPass = new ScreenSpaceOcclusionDebug();
     }
 
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
+        if (setting.intensity <= 0)
+            return;
+
+        renderer.EnqueuePass(m_Pass);
+
+        if (setting.debugMode != ScreenSpaceOcclusionSetting.DebugMode.Disabled)
+        {
+            renderer.EnqueuePass(m_DebugPass);
+        }
     }
 }
 
@@ -26,8 +38,8 @@ public class ScreenSpaceOcclusionSetting
 {
     public enum AOType
     {
-        HorizonBasedAmbientOcclusion,
-        GroundTruthBasedAmbientOcclusion,
+        HorizonBasedAmbientOcclusion,//HBAO
+        GroundTruthBasedAmbientOcclusion,//GTAO
         ScalableAmbientObscurance,
     }
 

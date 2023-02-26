@@ -1,58 +1,56 @@
-Shader "Unlit/ScreenSpaceOcclusion"
+Shader "Hidden/PostProcessing/ScreenSpaceOcclusion"
 {
-    Properties
-    {
-        _MainTex ("Texture", 2D) = "white" {}
-    }
+    HLSLINCLUDE
+    #include "ScreenSpaceOcclusionInput.hlsl"
+    ENDHLSL
+
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
-        LOD 100
+        Tags { "RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" }
+        ZTest Always ZWrite Off Cull Off
 
         Pass
         {
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-            // make fog work
-            #pragma multi_compile_fog
+            Name "ScreenSpaceOcclusion AO"
 
-            #include "UnityCG.cginc"
+            HLSLPROGRAM
 
-            struct appdata
-            {
-                float4 vertex : POSITION;
-                float2 uv : TEXCOORD0;
-            };
+            #pragma multi_compile_local HORIZON_BASED_AMBIENTOCCLUSION GROUNDTRUTH_BASED_AMBIENTOCCLUSION SCALABLE_AMBIENT_OBSCURANCE
 
-            struct v2f
-            {
-                float2 uv : TEXCOORD0;
-                UNITY_FOG_COORDS(1)
-                float4 vertex : SV_POSITION;
-            };
+            #pragma vertex Vert
+            #pragma fragment FragAO
 
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
+            #include "ScreenSpaceOcclusionAO.hlsl"
+            
+            ENDHLSL
+        }
 
-            v2f vert (appdata v)
-            {
-                v2f o;
-                o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-                UNITY_TRANSFER_FOG(o,o.vertex);
-                return o;
-            }
+        Pass
+        {
+            Name "ScreenSpaceOcclusion BlurH"
 
-            fixed4 frag (v2f i) : SV_Target
-            {
-                // sample the texture
-                fixed4 col = tex2D(_MainTex, i.uv);
-                // apply fog
-                UNITY_APPLY_FOG(i.fogCoord, col);
-                return col;
-            }
-            ENDCG
+            HLSLPROGRAM
+            #pragma multi_compile_local BLUR_RADIUS_2 BLUR_RADIUS_3 BLUR_RADIUS_4 BLUR_RADIUS_5
+
+            #pragma vertex Vert
+            #pragma fragment FragBlurH
+
+            #include "ScreenSpaceOcclusionBlur.hlsl"
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "ScreenSpaceOcclusion BlurV"
+
+            HLSLPROGRAM
+            #pragma multi_compile_local BLUR_RADIUS_2 BLUR_RADIUS_3 BLUR_RADIUS_4 BLUR_RADIUS_5
+
+            #pragma vertex Vert
+            #pragma fragment FragBlurV
+
+            #include "ScreenSpaceOcclusionBlur.hlsl"
+            ENDHLSL
         }
     }
 }

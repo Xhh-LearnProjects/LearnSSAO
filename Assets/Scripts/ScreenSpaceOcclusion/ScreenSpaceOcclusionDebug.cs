@@ -1,18 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
-public class ScreenSpaceOcclusionDebug : MonoBehaviour
+public class ScreenSpaceOcclusionDebug : ScriptableRenderPass
 {
-    // Start is called before the first frame update
-    void Start()
+    public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
     {
-        
+        throw new System.NotImplementedException();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
 }
