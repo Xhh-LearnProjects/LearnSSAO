@@ -16,7 +16,10 @@ Shader "Hidden/PostProcessing/ScreenSpaceOcclusion"
             HLSLPROGRAM
 
             #pragma multi_compile_local HORIZON_BASED_AMBIENTOCCLUSION GROUNDTRUTH_BASED_AMBIENTOCCLUSION SCALABLE_AMBIENT_OBSCURANCE
-
+            #pragma multi_compile_local QUALITY_LOWEST QUALITY_LOW QUALITY_MEDIUM QUALITY_HIGH QUALITY_HIGHEST
+            #pragma multi_compile_local _ RECONSTRUCT_NORMAL_LOW RECONSTRUCT_NORMAL_MEDIUM RECONSTRUCT_NORMAL_HIGH
+            #pragma multi_compile_local _ DEBUG_AO DEBUG_VIEWNORMAL
+            
             #pragma vertex Vert
             #pragma fragment FragAO
 
@@ -50,6 +53,21 @@ Shader "Hidden/PostProcessing/ScreenSpaceOcclusion"
             #pragma fragment FragBlurV
 
             #include "ScreenSpaceOcclusionBlur.hlsl"
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "ScreenSpaceOcclusion Composite"
+
+            HLSLPROGRAM
+            #pragma multi_compile_local HORIZON_BASED_AMBIENTOCCLUSION GROUNDTRUTH_BASED_AMBIENTOCCLUSION SCALABLE_AMBIENT_OBSCURANCE
+            #pragma multi_compile_local _ DEBUG_AO DEBUG_VIEWNORMAL
+
+            #pragma vertex Vert
+            #pragma fragment FragComposite
+
+            #include "ScreenSpaceOcclusionComposite.hlsl"
             ENDHLSL
         }
     }

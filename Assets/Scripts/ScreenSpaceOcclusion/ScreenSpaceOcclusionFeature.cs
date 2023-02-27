@@ -14,7 +14,7 @@ public class ScreenSpaceOcclusionFeature : ScriptableRendererFeature
     public override void Create()
     {
         m_Pass = new ScreenSpaceOcclusion();
-        m_Pass.setting = setting;
+        m_Pass.settings = setting;
         m_DebugPass = new ScreenSpaceOcclusionDebug();
     }
 
@@ -25,10 +25,16 @@ public class ScreenSpaceOcclusionFeature : ScriptableRendererFeature
 
         renderer.EnqueuePass(m_Pass);
 
-        if (setting.debugMode != ScreenSpaceOcclusionSetting.DebugMode.Disabled)
+        if (setting.debugMode == ScreenSpaceOcclusionSetting.DebugMode.AOOnly)
         {
+            m_DebugPass.Setup(m_Pass.OcclusionFinalRT);
             renderer.EnqueuePass(m_DebugPass);
         }
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        m_Pass?.Dispose();
     }
 }
 
