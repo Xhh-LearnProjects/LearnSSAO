@@ -12,18 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acea40f93fcdb124e91582cfa9032947, type: 3}
   m_Name: ScreenSpaceOcclusionFeature
   m_EditorClassIdentifier: 
-  m_Active: 0
+  m_Active: 1
   setting:
-    type: 1
+    type: 0
     quality: 2
     resolution: 1
-    reconstructNormal: 0
-    intensity: 1
+    reconstructNormal: 3
+    intensity: 4
     radius: 0.8
     maxRadiusPixels: 128
     bias: 0.5
     thickness: 0
-    directLightingStrength: 0.25
+    directLightingStrength: 0.232
     maxDistance: 150
     distanceFalloff: 50
     blurType: 2
